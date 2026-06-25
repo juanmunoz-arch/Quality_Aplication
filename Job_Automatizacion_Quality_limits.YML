@@ -1,0 +1,38 @@
+resources:
+  jobs:
+    Job_Automatizacion_Quality_limits:
+      name: "Job_Automatizacion_Quality_limits "
+      schedule:
+        quartz_cron_expression: 42 0 3 * * ?
+        timezone_id: America/Bogota
+        pause_status: UNPAUSED
+      tasks:
+        - task_key: Transformacion_Bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/juanmunozingeniero62@gmail.com/Quality_Aplication/01_Qualiy_notebook_bronce_Ingesta_Analisis
+            source: WORKSPACE
+        - task_key: Transformacion_Silver
+          depends_on:
+            - task_key: Transformacion_Bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/juanmunozingeniero62@gmail.com/Quality_Aplication/02_Quality_Preparacion_Silver
+            source: WORKSPACE
+        - task_key: Preparacion_gold
+          depends_on:
+            - task_key: Transformacion_Silver
+          notebook_task:
+            notebook_path: /Workspace/Users/juanmunozingeniero62@gmail.com/Quality_Aplication/03_Quality_Creacion_Estr_Gold
+            source: WORKSPACE
+        - task_key: Dashboard
+          depends_on:
+            - task_key: Preparacion_gold
+          notebook_task:
+            notebook_path: /Workspace/Users/juanmunozingeniero62@gmail.com/Quality_Aplication/04_Quality_preparacion_Dashboard
+            source: WORKSPACE
+      git_source:
+        git_url: https://github.com/juanmunoz-arch/Quality_Aplication.git
+        git_provider: gitHub
+        git_branch: main
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
