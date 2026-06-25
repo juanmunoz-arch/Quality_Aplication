@@ -1,0 +1,1334 @@
+{
+  "datasets": [
+    {
+      "name": "437254de",
+      "displayName": "KPIs",
+      "queryLines": [
+        "SELECT\r\n",
+        "    total_mediciones,\r\n",
+        "    total_fuera_limite,\r\n",
+        "    total_bajo_limite,\r\n",
+        "    total_sobre_limite,\r\n",
+        "    total_articulos,\r\n",
+        "    total_variables,\r\n",
+        "    porcentaje_fuera_limite,\r\n",
+        "    fecha_minima,\r\n",
+        "    fecha_maxima,\r\n",
+        "    fecha_actualizacion\r\n",
+        "FROM quality_data.gold.kpi_control_calidad;"
+      ]
+    },
+    {
+      "name": "ed3db78e",
+      "displayName": "Variables con mas Alertas",
+      "queryLines": [
+        "SELECT\r\n",
+        "    variable_nombre,\r\n",
+        "    COUNT(*) AS total_alertas\r\n",
+        "FROM quality_data.gold.alertas_calidad\r\n",
+        "GROUP BY variable_nombre\r\n",
+        "ORDER BY total_alertas DESC\r\n",
+        "LIMIT 10;"
+      ]
+    },
+    {
+      "name": "40b1de0b",
+      "displayName": "Articulos Con Mas alertas",
+      "queryLines": [
+        "SELECT\r\n",
+        "    articulo_codigo,\r\n",
+        "    COUNT(*) AS total_alertas\r\n",
+        "FROM quality_data.gold.alertas_calidad\r\n",
+        "GROUP BY articulo_codigo\r\n",
+        "ORDER BY total_alertas DESC\r\n",
+        "LIMIT 10;"
+      ]
+    },
+    {
+      "name": "9bac8d18",
+      "displayName": "Detalle de OS fuera de control",
+      "queryLines": [
+        "SELECT\n",
+        "  hdr AS hoja_ruta,\n",
+        "  cliente_codigo,\n",
+        "  articulo_codigo,\n",
+        "  variable_nombre,\n",
+        "  resultado_numerico,\n",
+        "  limite_inferior,\n",
+        "  limite_superior,\n",
+        "  estado_control,\n",
+        "  distancia_al_limite,\n",
+        "  fecha_medicion\n",
+        "FROM\n",
+        "  quality_data.gold.alertas_calidad\n",
+        "\n",
+        "ORDER BY\n",
+        "  fecha_medicion DESC,\n",
+        "  hdr,\n",
+        "  variable_nombre"
+      ],
+      "catalog": "quality_data",
+      "schema": "gold"
+    },
+    {
+      "name": "a91f9db8",
+      "displayName": "Kpi2",
+      "queryLines": [
+        "SELECT\r\n",
+        "    COUNT(DISTINCT hdr) AS total_hojas_ruta_afectadas\r\n",
+        "FROM quality_data.gold.alertas_calidad;"
+      ],
+      "catalog": "quality_data",
+      "schema": "default"
+    }
+  ],
+  "pages": [
+    {
+      "name": "56c12f14",
+      "displayName": "Dashboard Calidad",
+      "layout": [
+        {
+          "widget": {
+            "name": "r",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ed3db78e",
+                  "fields": [
+                    {
+                      "name": "sum(total_alertas)",
+                      "expression": "SUM(`total_alertas`)"
+                    },
+                    {
+                      "name": "variable_nombre",
+                      "expression": "`variable_nombre`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": "Variables con mayor numero de Alertas en todo el Dataset ",
+                "headerAlignment": "center"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(total_alertas)",
+                  "displayName": "Cantidad de Alertas",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "variable_nombre",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#FFFFFF"
+              },
+              "widgetBorderColor": {
+                "light": "#442EE2"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "40b1de0b",
+                  "fields": [
+                    {
+                      "name": "articulo_codigo",
+                      "expression": "`articulo_codigo`"
+                    },
+                    {
+                      "name": "sum(total_alertas)",
+                      "expression": "SUM(`total_alertas`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 1
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Articulos con mas Alertas en todo dataset historico  ",
+                "headerAlignment": "center"
+              },
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "articulo_codigo",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_alertas)",
+                  "axis": {
+                    "hideLabels": false,
+                    "hideGrid": false
+                  },
+                  "scale": {
+                    "type": "quantitative",
+                    "reverse": false
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#101ECA"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "fecha",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "437254de",
+                  "fields": [
+                    {
+                      "name": "fecha_maxima",
+                      "expression": "`fecha_maxima`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "Fecha del Ultimo Dato "
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "fecha_maxima",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#0F0D0D"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "7598a287",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "437254de",
+                  "fields": [
+                    {
+                      "name": "porcentaje_fuera_limite",
+                      "expression": "`porcentaje_fuera_limite`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "% de Alertas \nGeneradas"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "porcentaje_fuera_limite",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "rowNumber": 2
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#110B0B"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 9,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f856db58",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "437254de",
+                  "fields": [
+                    {
+                      "name": "fecha_actualizacion",
+                      "expression": "`fecha_actualizacion`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "Ultima Actualizacion \nde los Datos"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "fecha_actualizacion",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#110B0B"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 9,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "ca",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "437254de",
+                  "fields": [
+                    {
+                      "name": "total_mediciones",
+                      "expression": "`total_mediciones`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "Total de mediciones "
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_mediciones",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#110B0B"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 9,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "2207ce0f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "437254de",
+                  "fields": [
+                    {
+                      "name": "total_fuera_limite",
+                      "expression": "`total_fuera_limite`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "Cantidad de mediciones Fuera \nde los limites  "
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_fuera_limite",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#110B0B"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 9,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "8ffba6f2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "437254de",
+                  "fields": [
+                    {
+                      "name": "total_variables",
+                      "expression": "`total_variables`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "Cantidad de Variables \nMedidas "
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_variables",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#110B0B"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 9,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "r-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "hoja_ruta",
+                      "expression": "`hoja_ruta`"
+                    },
+                    {
+                      "name": "cliente_codigo",
+                      "expression": "`cliente_codigo`"
+                    },
+                    {
+                      "name": "articulo_codigo",
+                      "expression": "`articulo_codigo`"
+                    },
+                    {
+                      "name": "variable_nombre",
+                      "expression": "`variable_nombre`"
+                    },
+                    {
+                      "name": "limite_inferior",
+                      "expression": "`limite_inferior`"
+                    },
+                    {
+                      "name": "resultado_numerico",
+                      "expression": "`resultado_numerico`"
+                    },
+                    {
+                      "name": "limite_superior",
+                      "expression": "`limite_superior`"
+                    },
+                    {
+                      "name": "estado_control",
+                      "expression": "`estado_control`"
+                    },
+                    {
+                      "name": "fecha_medicion",
+                      "expression": "`fecha_medicion`"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "IN_RANGE(`fecha_medicion`, PARSE_RELATIVE_DATE('now-1y/y', 'FLOOR'), TIMESTAMP'2030-12-31T23:59:59.000')"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "rowsPerPage": 50,
+              "displayRowNumbers": true,
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": {
+                  "themeColorType": "widgetBackgroundColor"
+                }
+              },
+              "headerStyle": {
+                "foregroundColor": {
+                  "themeColorType": "fontColor"
+                },
+                "bold": true
+              },
+              "headerHeight": 60,
+              "frame": {
+                "showTitle": true,
+                "title": "Detalle OS con alertas Generadas en el ultimo Año",
+                "headerAlignment": "center"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "hoja_ruta"
+                  },
+                  {
+                    "fieldName": "cliente_codigo"
+                  },
+                  {
+                    "fieldName": "articulo_codigo"
+                  },
+                  {
+                    "fieldName": "variable_nombre"
+                  },
+                  {
+                    "fieldName": "limite_inferior"
+                  },
+                  {
+                    "fieldName": "resultado_numerico"
+                  },
+                  {
+                    "fieldName": "limite_superior"
+                  },
+                  {
+                    "fieldName": "estado_control"
+                  },
+                  {
+                    "fieldName": "fecha_medicion"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 8
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#2020C7"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "c4029f34",
+            "queries": [
+              {
+                "name": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_fecha_medicion",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "fecha_medicion",
+                      "expression": "`fecha_medicion`"
+                    },
+                    {
+                      "name": "fecha_medicion_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center"
+              },
+              "widgetType": "filter-date-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "fecha_medicion",
+                    "queryName": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_fecha_medicion"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 1,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "7b173169",
+            "queries": [
+              {
+                "name": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_cliente_codigo",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "cliente_codigo",
+                      "expression": "`cliente_codigo`"
+                    },
+                    {
+                      "name": "cliente_codigo_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "cliente_codigo",
+                    "queryName": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_cliente_codigo"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "9e570d2c",
+            "queries": [
+              {
+                "name": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_articulo_codigo",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "articulo_codigo",
+                      "expression": "`articulo_codigo`"
+                    },
+                    {
+                      "name": "articulo_codigo_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "articulo_codigo",
+                    "queryName": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_articulo_codigo"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "653dbf40",
+            "queries": [
+              {
+                "name": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_variable_nombre",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "variable_nombre",
+                      "expression": "`variable_nombre`"
+                    },
+                    {
+                      "name": "variable_nombre_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "variable_nombre",
+                    "queryName": "dashboards/01f16dd72b651828b1f5145ef9a5f761/datasets/01f16dd8bd1912fd9ade26491e592e84_variable_nombre"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "b5103d11",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-family: DM Sans;font-size: 27px;\">**Dashboard de Alarmas de Calidad&#32;**</span></span>"
+              ],
+              "verticalAlign": "VERTICAL_ALIGN_CENTER"
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#FFFFFF"
+              },
+              "widgetBorderColor": {
+                "light": "#000000"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "30f0c654",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "estado_control",
+                      "expression": "`estado_control`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 1
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "estado_control",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 1,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "25134e19",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a91f9db8",
+                  "fields": [
+                    {
+                      "name": "sum(total_hojas_ruta_afectadas)",
+                      "expression": "SUM(`total_hojas_ruta_afectadas`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "headerAlignment": "center",
+                "title": "Hojas de Ruta\n Afectadas"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_hojas_ruta_afectadas)",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 16
+                  },
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "exact",
+                      "figures": 3
+                    },
+                    "negativeSign": "standard"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "light": "#110B0B"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 9,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "va-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "variable_nombre",
+                      "expression": "`variable_nombre`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "count(*)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "all"
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "variable_nombre",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 5,
+            "height": 15
+          }
+        },
+        {
+          "widget": {
+            "name": "db3057db",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "articulo_codigo",
+                      "expression": "`articulo_codigo`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "count(*)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "all"
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "articulo_codigo",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 17,
+            "width": 5,
+            "height": 15
+          }
+        },
+        {
+          "widget": {
+            "name": "b68befc8",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9bac8d18",
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {}
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 32,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "636c91bd",
+      "displayName": "Global Filters",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "locale": "es-CO",
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#FAFAFB",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "fontColor": {
+        "light": "#11171C",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#8ACAFF"
+      },
+      "widgetHeaderAlignment": "CENTER",
+      "textBoxVerticalAlign": "VERTICAL_ALIGN_CENTER",
+      "widgetShadow": 0,
+      "fontSettings": {
+        "base": {
+          "fontWeight": 500
+        }
+      },
+      "axisLineColor": {
+        "light": "#FAEEEE"
+      }
+    },
+    "applyModeEnabled": false
+  }
+}

@@ -1,0 +1,515 @@
+{
+  "datasets": [
+    {
+      "name": "resumen_articulos",
+      "displayName": "Resumen por Artículos",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  resumen_alertas_calidad\n",
+        "ORDER BY\n",
+        "  porcentaje_fuera_limite DESC"
+      ],
+      "catalog": "quality_data",
+      "schema": "gold"
+    },
+    {
+      "name": "kpi_principales",
+      "displayName": "KPI Principales",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  quality_data.gold.kpi_control_calidad"
+      ],
+      "catalog": "quality_data",
+      "schema": "gold"
+    },
+    {
+      "name": "alertas_detalle",
+      "displayName": "Alertas Detalle",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  alertas_calidad\n",
+        "ORDER BY\n",
+        "  fecha_medicion DESC"
+      ],
+      "catalog": "quality_data",
+      "schema": "gold"
+    }
+  ],
+  "pages": [
+    {
+      "name": "34bfcf72",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "kpi_mediciones",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "kpi_principales",
+                  "fields": [
+                    {
+                      "name": "sum(total_mediciones)",
+                      "expression": "SUM(`total_mediciones`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Total Mediciones",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_mediciones)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_fuera_limite",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "kpi_principales",
+                  "fields": [
+                    {
+                      "name": "sum(total_fuera_limite)",
+                      "expression": "SUM(`total_fuera_limite`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Fuera de Límite",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_fuera_limite)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_porcentaje",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "kpi_principales",
+                  "fields": [
+                    {
+                      "name": "avg(porcentaje_fuera_limite)",
+                      "expression": "AVG(`porcentaje_fuera_limite`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "% Fuera de Límite",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(porcentaje_fuera_limite)",
+                  "format": {
+                    "type": "number-percent"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_articulos",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "kpi_principales",
+                  "fields": [
+                    {
+                      "name": "sum(total_articulos)",
+                      "expression": "SUM(`total_articulos`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Total Artículos",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_articulos)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "resumen_articulos",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "resumen_articulos",
+                  "fields": [
+                    {
+                      "name": "articulo_codigo",
+                      "expression": "`articulo_codigo`"
+                    },
+                    {
+                      "name": "variable_nombre",
+                      "expression": "`variable_nombre`"
+                    },
+                    {
+                      "name": "total_mediciones",
+                      "expression": "`total_mediciones`"
+                    },
+                    {
+                      "name": "total_fuera_limite",
+                      "expression": "`total_fuera_limite`"
+                    },
+                    {
+                      "name": "porcentaje_fuera_limite",
+                      "expression": "`porcentaje_fuera_limite`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Resumen por Artículo",
+                "showTitle": true
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "articulo_codigo",
+                    "displayName": "Artículo"
+                  },
+                  {
+                    "fieldName": "variable_nombre",
+                    "displayName": "Variable"
+                  },
+                  {
+                    "fieldName": "total_mediciones",
+                    "displayName": "Total Mediciones"
+                  },
+                  {
+                    "fieldName": "total_fuera_limite",
+                    "displayName": "Fuera de Límite"
+                  },
+                  {
+                    "fieldName": "porcentaje_fuera_limite",
+                    "displayName": "% Fuera Límite"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "detalle_alertas",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "alertas_detalle",
+                  "fields": [
+                    {
+                      "name": "fecha_medicion_dia",
+                      "expression": "`fecha_medicion_dia`"
+                    },
+                    {
+                      "name": "articulo_codigo",
+                      "expression": "`articulo_codigo`"
+                    },
+                    {
+                      "name": "variable_nombre",
+                      "expression": "`variable_nombre`"
+                    },
+                    {
+                      "name": "estado_control",
+                      "expression": "`estado_control`"
+                    },
+                    {
+                      "name": "resultado_numerico",
+                      "expression": "`resultado_numerico`"
+                    },
+                    {
+                      "name": "limite_inferior",
+                      "expression": "`limite_inferior`"
+                    },
+                    {
+                      "name": "limite_superior",
+                      "expression": "`limite_superior`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Detalle de Alertas",
+                "showTitle": true
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "fecha_medicion_dia",
+                    "displayName": "Fecha"
+                  },
+                  {
+                    "fieldName": "articulo_codigo",
+                    "displayName": "Artículo"
+                  },
+                  {
+                    "fieldName": "variable_nombre",
+                    "displayName": "Variable"
+                  },
+                  {
+                    "fieldName": "estado_control",
+                    "displayName": "Estado"
+                  },
+                  {
+                    "fieldName": "resultado_numerico",
+                    "displayName": "Resultado"
+                  },
+                  {
+                    "fieldName": "limite_inferior",
+                    "displayName": "Límite Inf"
+                  },
+                  {
+                    "fieldName": "limite_superior",
+                    "displayName": "Límite Sup"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 12,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "alerta_tendencia",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "alertas_detalle",
+                  "fields": [
+                    {
+                      "name": "fecha_medicion_dia",
+                      "expression": "`fecha_medicion_dia`"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Tendencia de Alertas",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "fecha_medicion_dia",
+                  "displayName": "Fecha",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(*)",
+                  "displayName": "Total Alertas",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "estado_distribucion",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "alertas_detalle",
+                  "fields": [
+                    {
+                      "name": "estado_control",
+                      "expression": "`estado_control`"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Distribución por Estado",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "estado_control",
+                  "displayName": "Estado",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(*)",
+                  "displayName": "Cantidad",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 13,
+            "width": 6,
+            "height": 4
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}

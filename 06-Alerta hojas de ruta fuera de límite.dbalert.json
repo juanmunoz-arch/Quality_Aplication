@@ -1,0 +1,97 @@
+{
+  "custom_summary": "🚨 Alerta Calidad Textil - Hojas de ruta fuera de límites",
+  "evaluation": {
+    "source": {
+      "name": "total_alertas",
+      "display": "total_alertas",
+      "aggregation": "AGGREGATION_UNSPECIFIED"
+    },
+    "comparison_operator": "GREATER_THAN",
+    "threshold": {
+      "value": {
+        "double_value": 0.0
+      }
+    },
+    "empty_result_state": "OK",
+    "notification": {
+      "retrigger_seconds": 0,
+      "notify_on_ok": false
+    }
+  },
+  "schedule": {
+    "quartz_cron_schedule": "48 0 18 * * ?",
+    "timezone_id": "America/Bogota"
+  },
+  "query_lines": [
+    "",
+    "WITH ultima_fecha AS (",
+    "    SELECT",
+    "        MAX(DATE(fecha_medicion)) AS fecha_ultimo_dato",
+    "    FROM quality_data.gold.alertas_calidad",
+    "),",
+    "",
+    "resumen_hojas_ruta AS (",
+    "    SELECT",
+    "        a.hdr,",
+    "        a.cliente_codigo,",
+    "        a.articulo_codigo,",
+    "        COUNT(*) AS total_alertas,",
+    "        COUNT(DISTINCT a.variable_nombre) AS total_variables_fuera_limite,",
+    "        CONCAT_WS(', ', SORT_ARRAY(COLLECT_SET(a.variable_nombre))) AS variables_fuera_limite,",
+    "        CONCAT_WS(', ', SORT_ARRAY(COLLECT_SET(a.estado_control))) AS estados_detectados,",
+    "        ROUND(MAX(a.distancia_al_limite), 2) AS mayor_distancia_al_limite,",
+    "        MAX(a.fecha_medicion) AS ultima_fecha_alerta,",
+    "        CASE",
+    "            WHEN COUNT(DISTINCT a.variable_nombre) >= 3 OR COUNT(*) >= 5 THEN 'ALTA'",
+    "            WHEN COUNT(DISTINCT a.variable_nombre) = 2 OR COUNT(*) >= 3 THEN 'MEDIA'",
+    "            ELSE 'BAJA'",
+    "        END AS prioridad",
+    "    FROM quality_data.gold.alertas_calidad a",
+    "    CROSS JOIN ultima_fecha u",
+    "    WHERE DATE(a.fecha_medicion) = u.fecha_ultimo_dato",
+    "    GROUP BY",
+    "        a.hdr,",
+    "        a.cliente_codigo,",
+    "        a.articulo_codigo",
+    ")",
+    "",
+    "SELECT",
+    "    hdr,",
+    "    cliente_codigo,",
+    "    articulo_codigo,",
+    "    total_alertas,",
+    "    total_variables_fuera_limite,",
+    "    variables_fuera_limite,",
+    "    estados_detectados,",
+    "    mayor_distancia_al_limite,",
+    "    prioridad,",
+    "    ultima_fecha_alerta",
+    "FROM resumen_hojas_ruta",
+    "ORDER BY",
+    "    CASE prioridad",
+    "        WHEN 'ALTA' THEN 1",
+    "        WHEN 'MEDIA' THEN 2",
+    "        ELSE 3",
+    "    END,",
+    "    total_alertas DESC,",
+    "    total_variables_fuera_limite DESC,",
+    "    mayor_distancia_al_limite DESC",
+    "LIMIT 100;"
+  ],
+  "custom_description_lines": [
+    "<h2>🚨 Alerta de Calidad Textil</h2>",
+    "",
+    "<p>Se detectaron hojas de ruta con variables fuera de los límites de control.</p>",
+    "",
+    "<p><b>Estado de la alerta:</b> {{ALERT_STATUS}}</p>",
+    "<p><b>Condición evaluada:</b> {{ALERT_COLUMN}} {{ALERT_CONDITION}} {{ALERT_THRESHOLD}}</p>",
+    "",
+    "<h3>Listado de hojas de ruta afectadas</h3>",
+    "",
+    "{{QUERY_RESULT_TABLE}}",
+    "",
+    "<p><b>Acción sugerida:</b> revisar primero las hojas de ruta con prioridad ALTA, validar las variables afectadas y definir acciones correctivas con el equipo de calidad o producción.</p>",
+    "",
+    "<p><a href=\"{{ALERT_URL}}\">Abrir alerta en Databricks</a></p>"
+  ]
+}
